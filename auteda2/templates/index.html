@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Analysis App</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-label {
+            font-weight: bold;
+        }
+        .helper-text {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">Data Analysis Tool</h1>
+        
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-danger">
+            {% for message in messages %}
+            {{ message }}
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+        
+        <div class="form-container bg-light">
+            <form method="POST" action="/process" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="file" class="form-label">Upload CSV File:</label>
+                    <input type="file" class="form-control" id="file" name="file" accept=".csv" required>
+                    <div class="helper-text">Select a CSV file to analyze.</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="date_columns" class="form-label">Date Columns:</label>
+                    <input type="text" class="form-control" id="date_columns" name="date_columns" placeholder="e.g., ReadingDateTime, CreatedDate">
+                    <div class="helper-text">Comma-separated list of date columns to process.</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="date_format" class="form-label">Date Format:</label>
+                    <input type="text" class="form-control" id="date_format" name="date_format" value="%d/%m/%Y %H:%M">
+                    <div class="helper-text">Format of date columns (default: %d/%m/%Y %H:%M). <a href="https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior" target="_blank">View format codes</a></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="text_columns" class="form-label">Text Columns for Encoding:</label>
+                    <input type="text" class="form-control" id="text_columns" name="text_columns" placeholder="e.g., Species, Description">
+                    <div class="helper-text">Comma-separated list of text columns for TF-IDF, Word Cloud, and Sentiment Analysis.</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="target_column" class="form-label">Target Column:</label>
+                    <input type="text" class="form-control" id="target_column" name="target_column" placeholder="e.g., Provisional or Ratified_R">
+                    <div class="helper-text">Target column for feature importance analysis. If numeric, XGBoost Regressor will be used; otherwise, XGBoost Classifier.</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="drop_columns" class="form-label">Columns to Drop:</label>
+                    <input type="text" class="form-control" id="drop_columns" name="drop_columns" placeholder="e.g., ID, Site, ReadingDateTime">
+                    <div class="helper-text">Comma-separated list of columns to exclude from analysis.</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="chunksize" class="form-label">Chunk Size:</label>
+                    <input type="number" class="form-control" id="chunksize" name="chunksize" value="10000" min="1000">
+                    <div class="helper-text">Number of rows to process at once. Increase for faster processing if you have sufficient RAM, decrease if memory errors occur.</div>
+                </div>
+                
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary btn-lg">Process Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
